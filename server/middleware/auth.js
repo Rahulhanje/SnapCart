@@ -10,6 +10,7 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) return res.status(401).json({ message: "User not found" });
+    // console.log("req.user in protect middleware:", req.user);
     next();
   } catch {
     res.status(401).json({ message: "Token invalid" });
@@ -17,6 +18,7 @@ export const protect = async (req, res, next) => {
 };
 
 export const admin = (req, res, next) => {
+  // console.log("req.user in admin middleware:", req.user);
   if (req.user && req.user.isAdmin) return next();
   res.status(403).json({ message: "Admin access only" });
 };

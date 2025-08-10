@@ -6,11 +6,18 @@ import connectDB from './db/db.js';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
-
+import cloudinary from 'cloudinary';
 dotenv.config();
 //connect to MongoDB
 connectDB();
- 
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+
 const app= express();
 app.use(cors());
 app.use(bodyParser.json());
