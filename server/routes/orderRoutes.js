@@ -7,7 +7,7 @@ const orderRoutes = express.Router();
 orderRoutes.post('/',protect,addOrderItems);
 orderRoutes.get('/myorders', protect, getMyOrders);
 orderRoutes.get('/:id', protect, getOrderById);
-orderRoutes.put('/:id/status', protect, admin, updateOrderStatus);
+orderRoutes.put('/status', protect, admin, updateOrderStatus);
 orderRoutes.get('/',protect, admin, getAllOrders);
 
 
