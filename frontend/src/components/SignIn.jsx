@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api";
-import { set } from "mongoose";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -19,7 +18,7 @@ function SignIn() {
     const userData = { email, password };
 
     try {
-      const res = await API.post(`/auth/signin`, userData); //change the URL to your backend endpoint
+      const res = await API.post(`/auth/login`, userData); //change the URL to your backend endpoint
       localStorage.setItem("token", res.data.token); // Store the token in local storage
       localStorage.setItem("user", JSON.stringify(res.data.user)); // Store user data in local storage
       setIsLoading(false);
