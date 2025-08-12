@@ -37,6 +37,19 @@ export const addOrderItems = async (req, res) => {
 
 
 
+export const getMyOrders = async (req, res) => {
+
+}
+
+export const getOrderById=async (req, res) => {
+
+}
+
+
+export const getAllOrders = async (req, res) => {
+
+}
+
 
 export const updateOrderStatus = async (req, res) => {
     const { orderId, status } = req.body;
