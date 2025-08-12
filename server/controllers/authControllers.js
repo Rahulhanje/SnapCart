@@ -68,10 +68,8 @@ export const updateProfile = async (req, res) => {
         user.password = await bcrypt.hash(req.body.password, 10);
     }
 
-    // Make admin if requested
-    if (req.body.isAdmin === true) {
-        user.isAdmin = true;
-    }
+    user.isAdmin = req.body.isAdmin !== undefined ? req.body.isAdmin : user.isAdmin; // Preserve existing isAdmin if not provided
+    console.log("isAdmin:", user.isAdmin);
 
     const updatedUser = await user.save();
     // Yes, it's needed to update the token if user info (like _id) is used in the token payload.
