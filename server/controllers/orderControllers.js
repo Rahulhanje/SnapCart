@@ -38,16 +38,56 @@ export const addOrderItems = async (req, res) => {
 
 
 export const getMyOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({ userId: req.user._id }).sort({ orderDate: -1 });
 
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found' });
+        }
+        // console.log('User orders:', orders);
+        
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
 }
 
 export const getOrderById=async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const order = await Order.findById(id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Check if the user is authorized to view this order
+        if (order.userId.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('Error fetching order by ID:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
 }
 
 
 export const getAllOrders = async (req, res) => {
-
+    try{
+        const orders=await Order.find({}).sort({orderDate: -1});
+        if(!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found' });
+        }
+        res.status(200).json(orders);
+    }
+    catch(error) {
+        console.error('Error fetching all orders:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
 }
 
 

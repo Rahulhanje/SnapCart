@@ -5,9 +5,9 @@ import { addOrderItems, getAllOrders, getMyOrders, getOrderById, updateOrderStat
 const orderRoutes = express.Router();
 
 orderRoutes.post('/',protect,addOrderItems);
+orderRoutes.put('/status', protect, admin, updateOrderStatus);
 orderRoutes.get('/myorders', protect, getMyOrders);
 orderRoutes.get('/:id', protect, getOrderById);
-orderRoutes.put('/status', protect, admin, updateOrderStatus);
 orderRoutes.get('/',protect, admin, getAllOrders);
 
 

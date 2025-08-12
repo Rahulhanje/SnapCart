@@ -23,6 +23,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ message: 'Invalid JSON payload' });
+    }
+    next();
+});
 app.use("/api/auth",authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
