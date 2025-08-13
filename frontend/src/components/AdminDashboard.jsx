@@ -123,7 +123,7 @@ export default function AdminDashboard() {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      await API.put(`/orders/${id}`, { status });
+      await API.put(`/orders/status`, { orderId: id, status });
       fetchData();
     } catch (err) {
       console.error("Error updating order status:", err);
@@ -314,7 +314,9 @@ export default function AdminDashboard() {
                 <tr className="bg-gray-100 border-b">
                   <th className="py-2 px-4">Order ID</th>
                   <th className="py-2 px-4">Customer</th>
+                  <th className="py-2 px-4">Products</th>
                   <th className="py-2 px-4">Total Price</th>
+                  <th className="py-2 px-4">Order Date</th>
                   <th className="py-2 px-4">Status</th>
                 </tr>
               </thead>
@@ -323,7 +325,22 @@ export default function AdminDashboard() {
                   <tr key={o._id} className="border-b">
                     <td className="py-2 px-4">{o._id}</td>
                     <td className="py-2 px-4">{o.userId}</td>
+                    <td className="py-2 px-4">
+                      {o.orderItems?.map((item, idx) => (
+                        <div key={idx} className="mb-1">
+                          <span className="font-medium">Product:</span>{" "}
+                          {item.product} <br />
+                          <span className="font-medium">Qty:</span> {item.qty}
+                        </div>
+                      ))}
+                    </td>
                     <td className="py-2 px-4">${o.totalPrice}</td>
+                    <td className="py-2 px-4">
+                      {new Date(o.createdAt).toLocaleString("en-IN", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </td>
                     <td className="py-2 px-4">
                       <select
                         value={o.status}

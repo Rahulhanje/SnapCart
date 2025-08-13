@@ -26,6 +26,25 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
+  const addToCart = () => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItem = storedCart.find((item) => item._id === product._id);
+
+    let updatedCart;
+    if (existingItem) {
+      updatedCart = storedCart.map((item) =>
+        item._id === product._id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+    } else {
+      updatedCart = [...storedCart, { ...product, quantity: 1 }];
+    }
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    alert("Product added to cart!");
+  };
+
   return loading ? (
     <p className="text-center py-6">Loading product...</p>
   ) : error ? (
@@ -45,18 +64,14 @@ export default function ProductDetails() {
         <p className="text-xl font-semibold mb-4">${product.price}</p>
 
         <div className="flex gap-4">
-          {/* Add to Cart */}
           <button
-            onClick={() =>
-              API.post("/cart", { productId: product._id, quantity: 1 })
-            }
+            onClick={addToCart}
             disabled={loading}
             className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
           >
             Add to Cart
           </button>
 
-          {/* Go to Cart */}
           <button
             onClick={() => navigate("/cart")}
             className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
