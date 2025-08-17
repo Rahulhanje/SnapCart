@@ -58,6 +58,7 @@ export default function Cart() {
     }
   };
 
+function Users() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
@@ -146,3 +147,4 @@ export default function Cart() {
     </div>
   );
 }
+export default Users
