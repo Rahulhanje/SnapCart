@@ -22,7 +22,7 @@ export default function Cart() {
   const loadDummyData = () => {
     const dummyCart = [
       {
-        _id: "1",
+        _id: "1", //this should be an ObjectID
         name: "Wireless Headphones",
         price: 59.99,
         quantity: 1,
@@ -31,6 +31,12 @@ export default function Cart() {
         _id: "2",
         name: "Smart Watch",
         price: 129.99,
+        quantity: 1,
+      },
+      {
+        _id: "3",
+        name: "Wireless Headphones",
+        price: 59.99,
         quantity: 1,
       },
     ];
@@ -89,76 +95,127 @@ export default function Cart() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty</p>
+        <p className="text-red-600">Your cart is empty</p>
       ) : (
         <>
-          {cartItems.map((item) => (
-            <div
-              key={item._id}
-              className="flex justify-between items-center bg-white shadow-md p-4 rounded-lg mb-4"
-            >
-              <div>
-                <h3 className="font-semibold">{item.name}</h3>
-                <p>Qty: {item.quantity}</p>
-                <p>${item.price}</p>
-              </div>
-              <button
-                onClick={() => handleRemove(item._id)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+          {/* Cart Items */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-8">
+            {cartItems.map((item) => (
+              <div
+                key={item._id}
+                className="bg-white shadow-md rounded-xl p-4 flex flex-col"
               >
-                Remove
-              </button>
-            </div>
-          ))}
+                {/* Product Image */}
+                <img
+                  src={item.image || "https://via.placeholder.com/200x150"}
+                  alt={item.name}
+                  className="w-full h-40 object-cover rounded-lg mb-4"
+                />
+
+                {/* Product Info */}
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {item.name}
+                  </h3>
+                  <p className="text-gray-600">Qty: {item.quantity}</p>
+                  <p className="text-blue-600 font-bold">${item.price}</p>
+                </div>
+
+                {/* Remove Button */}
+
+                <button
+                  onClick={() => handleRemove(item._id)}
+                  className="mt-4 bg-red-500 text-white px-3 py-2 w-1/3  rounded-lg hover:bg-red-600"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
 
           {/* Shipping Address Form */}
-          <div className="bg-gray-100 p-4 rounded-lg mb-4">
-            <h2 className="text-lg font-semibold mb-2">Shipping Address</h2>
-            <input
-              type="text"
-              placeholder="Address"
-              value={shippingAddress.address}
-              onChange={(e) =>
-                setShippingAddress({
-                  ...shippingAddress,
-                  address: e.target.value,
-                })
-              }
-              className="border p-2 rounded w-full mb-2"
-            />
-            <input
-              type="text"
-              placeholder="City"
-              value={shippingAddress.city}
-              onChange={(e) =>
-                setShippingAddress({ ...shippingAddress, city: e.target.value })
-              }
-              className="border p-2 rounded w-full mb-2"
-            />
-            <input
-              type="text"
-              placeholder="Postal Code"
-              value={shippingAddress.postalCode}
-              onChange={(e) =>
-                setShippingAddress({
-                  ...shippingAddress,
-                  postalCode: e.target.value,
-                })
-              }
-              className="border p-2 rounded w-full mb-2"
-            />
-            <input
-              type="text"
-              placeholder="Country"
-              value={shippingAddress.country}
-              onChange={(e) =>
-                setShippingAddress({
-                  ...shippingAddress,
-                  country: e.target.value,
-                })
-              }
-              className="border p-2 rounded w-full mb-2"
-            />
+          <div className="bg-white shadow-md p-6 rounded-2xl mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              Shipping Address
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Address */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  placeholder="Street Name"
+                  value={shippingAddress.address}
+                  onChange={(e) =>
+                    setShippingAddress({
+                      ...shippingAddress,
+                      address: e.target.value,
+                    })
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* City */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  City
+                </label>
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={shippingAddress.city}
+                  onChange={(e) =>
+                    setShippingAddress({
+                      ...shippingAddress,
+                      city: e.target.value,
+                    })
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Postal Code */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Postal Code
+                </label>
+                <input
+                  type="text"
+                  placeholder="Postal Code"
+                  value={shippingAddress.postalCode}
+                  onChange={(e) =>
+                    setShippingAddress({
+                      ...shippingAddress,
+                      postalCode: e.target.value,
+                    })
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Country */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  placeholder="Country"
+                  value={shippingAddress.country}
+                  onChange={(e) =>
+                    setShippingAddress({
+                      ...shippingAddress,
+                      country: e.target.value,
+                    })
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
 
           {error && (
@@ -166,12 +223,14 @@ export default function Cart() {
           )}
 
           {/* Checkout Button */}
-          <button
-            onClick={handleCheckout}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            Checkout
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={handleCheckout}
+              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+            >
+              Checkout
+            </button>
+          </div>
         </>
       )}
     </div>

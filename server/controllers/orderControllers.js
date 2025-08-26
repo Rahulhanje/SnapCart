@@ -33,6 +33,10 @@ export const addOrderItems = async (req, res) => {
       orderDate: new Date(),
     });
 
+    if (!order){
+      console.log("Cannot create Order")
+    }
+
     const createdOrder = await order.save();
 
     res.status(201).json(createdOrder);

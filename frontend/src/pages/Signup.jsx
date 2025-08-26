@@ -31,6 +31,9 @@ function Signup() {
       );
       console.error("Error signing up: ", err);
     }
+    finally{
+      setLoading(false)
+    }
   };
 
   return (
