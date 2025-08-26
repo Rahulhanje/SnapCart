@@ -21,7 +21,7 @@ Follow these steps to get the project running locally on your machine.
 git clone <repository_url>
 cd <project_folder>/backend
 ```
-### **2. Install Dependencies**
+### **2. Install the Dependencies**
 ```bash
 npm install
 ```
