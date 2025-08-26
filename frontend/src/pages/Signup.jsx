@@ -18,7 +18,7 @@ function Signup() {
     setLoading(true);
     setError("");
 
-    const userData = { name, email, password, isAdmin };
+    // const userData = { name, email, password, isAdmin };
 
     try {
       const res = await API.post("/auth/register", userData); //change later

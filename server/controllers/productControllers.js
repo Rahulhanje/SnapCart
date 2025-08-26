@@ -27,29 +27,44 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   const { name, price, description, category, image, stock } = req.body;
   try {
-    if (
-      !name ||
-      !price ||
-      !description ||
-      !category ||
-      !image ||
-      stock === undefined
-    ) {
+    if (!name || !price || !description || !category || stock === undefined) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    // Upload image to Cloudinary
-    // const uploadedImage = await cloudinary.uploader.upload(image, {
-    //   folder: "products",
-    // });
-    // Create new product with Cloudinary image URL
-    // const imageUrl = uploadedImage.secure_url;
-    // image = imageUrl;
+
+    let imageUrl = image;
+
+    // if a file is uploaded via multipart, upload its buffer to Cloudinary
+    if (req.file && req.file.buffer) {
+      const uploaded = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+      imageUrl = uploaded.secure_url;
+    }
+
+    // if no file but a base64 or remote URL string is provided, optionally upload base64
+    if (!imageUrl && image) {
+      // If the client passed a base64 data URI, Cloudinary can accept it directly
+      const uploaded = await cloudinary.uploader.upload(image, { folder: "products" });
+      imageUrl = uploaded.secure_url;
+    }
+
+    if (!imageUrl) {
+      return res.status(400).json({ message: "Image file or URL is required" });
+    }
+
     const newProduct = new Product({
       name,
       price,
       description,
       category,
-      image,
+      image: imageUrl,
       stock,
     });
     const savedProduct = await newProduct.save();
@@ -71,13 +86,26 @@ export const updateProduct = async (req, res) => {
     if (price) product.price = price;
     if (description) product.description = description;
     if (category) product.category = category;
-    if (image) {
-      // Upload new image to Cloudinary
-      // const uploadedImage = await cloudinary.uploader.upload(image, {
-      //   folder: "products",
-      // });
-      // product.image = uploadedImage.secure_url;
-      product.image = image; // Assuming image is already a URL
+    if (req.file && req.file.buffer) {
+      const uploaded = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+      product.image = uploaded.secure_url;
+    } else if (image) {
+      // If provided an image string, allow updating to it. If it's base64, upload it
+      if (typeof image === "string" && image.startsWith("data:")) {
+        const uploaded = await cloudinary.uploader.upload(image, { folder: "products" });
+        product.image = uploaded.secure_url;
+      } else {
+        product.image = image;
+      }
     }
     if (stock !== undefined) product.stock = stock;
     const updatedProduct = await product.save();
