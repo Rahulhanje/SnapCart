@@ -151,13 +151,13 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
             <div className="flex flex-col gap-4">
               <Link
-                to="/admin/products/add"
+                to="/admin/addProduct"
                 className="flex md:w-1/2 items-center gap-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 <PlusCircle size={20} /> Add Product
               </Link>
               <Link
-                to="/admin/orders/update-status"
+                to="/admin/orders/"
                 className="flex items-center md:w-1/2 gap-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
               >
                 <Edit size={20} /> Update Order Status

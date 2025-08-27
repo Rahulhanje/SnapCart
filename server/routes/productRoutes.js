@@ -18,9 +18,14 @@ const upload = multer({ storage });
 productRoutes.get("/", getAllProducts);
 productRoutes.get("/:id", getProductById);
 
-
-productRoutes.post("/",upload.single("image"), protect, admin,  createProduct);
-productRoutes.put("/:id",upload.single("image"), protect, admin,  updateProduct);
+productRoutes.post("/", upload.single("image"), protect, admin, createProduct);
+productRoutes.put(
+  "/:id",
+  upload.single("image"),
+  protect,
+  admin,
+  updateProduct
+);
 productRoutes.delete("/:id", protect, admin, deleteProduct);
 
 export default productRoutes;

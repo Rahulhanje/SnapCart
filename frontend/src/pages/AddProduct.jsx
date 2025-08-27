@@ -1,16 +1,69 @@
-import React from 'react'
+import React, { useState, useRef } from "react";
+import API from "../../api";
+import { useNavigate } from "react-router-dom";
 
 function AddProduct() {
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    image: null,
+    stock: "",
+  });
+  const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const navigate = useNavigate();
+  const handleFormChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      const file = files[0];
+      setForm({ ...form, image: file });
+      setPreviewImage(file ? URL.createObjectURL(file) : null);
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
+
+  const addProduct = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
+    if (form.price <= 0) newErrors.price = "Price must be positive";
+    if (form.stock < 0) newErrors.stock = "Stock cannot be negative";
+    if (!form.image && !editId) newErrors.image = "Image is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setError(newErrors);
+      return;
+    }
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      for (const key in form) {
+        formData.append(key, form[key]);
+      }
+      await API.post("/products", formData);
+      setForm({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        image: null,
+        stock: "",
+      });
+      setPreviewImage(null);
+      navigate("/admin/products");
+    } catch (err) {
+      console.error("Error saving product:", err);
+    }
+  };
   return (
     <div>
       {/* Add/Edit Product Form */}
-      <form
-        onSubmit={handleAddOrUpdateProduct}
-        className="bg-white shadow rounded p-4 mb-6"
-      >
-        <h2 className="text-xl font-semibold mb-4">
-          {editId ? "Edit Product" : "Add Product"}
-        </h2>
+      <form onSubmit={addProduct} className="bg-white shadow rounded p-4 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Add Product</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             name="name"
@@ -88,14 +141,15 @@ function AddProduct() {
           />
         </div>
         <button
+          onClick={addProduct}
           type="submit"
           className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
-          {editId ? "Update Product" : "Add Product"}
+          Add Product
         </button>
       </form>
     </div>
   );
 }
 
-export default AddProduct
+export default AddProduct;

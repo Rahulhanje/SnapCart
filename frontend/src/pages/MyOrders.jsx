@@ -7,12 +7,35 @@ export default function MyOrders() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    setError("");
     const fetchOrders = async () => {
+      setLoading(true);
+      setError("");
       try {
-        const res = await API.get("/orders/myOrders"); // 👈 user-specific API
-        setOrders(res.data);
+        const res = await API.get("/orders/myOrders");
+        const ordersData = Array.isArray(res.data) ? res.data : [];
+
+        // Fetch product details for each product in the orders
+        const updatedOrders = await Promise.all(
+          ordersData.map(async (order) => {
+            const detailedProducts = await Promise.all(
+              order.products.map(async (prod) => {
+                try {
+                  const resProd = await API.get(`/products/${prod._id}`);
+                  return {
+                    ...resProd.data,
+                    quantity: prod.quantity, // keep the quantity from order
+                  };
+                } catch (err) {
+                  console.error("Error fetching product:", err);
+                  return { ...prod }; // fallback to minimal info
+                }
+              })
+            );
+            return { ...order, products: detailedProducts };
+          })
+        );
+
+        setOrders(updatedOrders);
       } catch (err) {
         console.error("Error fetching orders:", err);
         setError("Failed to load orders");
@@ -58,23 +81,41 @@ export default function MyOrders() {
               </span>
             </div>
 
+            {/* Shipping Address */}
+            {order.shippingAddress && (
+              <div className="mb-4 text-sm text-gray-600">
+                <p className="font-medium">Shipping Address:</p>
+                <p>
+                  {order.shippingAddress.address}, {order.shippingAddress.city},{" "}
+                  {order.shippingAddress.country} -{" "}
+                  {order.shippingAddress.postalCode}
+                </p>
+              </div>
+            )}
+
             {/* Order Items */}
             <div className="space-y-3">
-              {order.orderItems.map((item, idx) => (
+              {order.products?.map((item, idx) => (
                 <div
                   key={idx}
                   className="flex items-center gap-4 border-b pb-3 last:border-none"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded-md"
+                    />
+                  )}
                   <div className="flex-1">
                     <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                    <p className="text-sm text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
                   </div>
-                  <p className="font-semibold">₹{item.price}</p>
+                  <p className="font-semibold">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </p>
                 </div>
               ))}
             </div>
@@ -82,11 +123,11 @@ export default function MyOrders() {
             {/* Order Footer */}
             <div className="mt-4 flex flex-col md:flex-row justify-between text-sm text-gray-600">
               <p>
-                <strong>Total: </strong>₹{order.totalPrice}
+                <strong>Total: </strong>₹{order.totalPrice.toFixed(2)}
               </p>
               <p>
                 <strong>Ordered on: </strong>
-                {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                {new Date(order.createdAt).toLocaleString("en-IN", {
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}

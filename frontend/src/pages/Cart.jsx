@@ -13,39 +13,39 @@ export default function Cart() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  //   setCartItems(storedCart);
-  // }, []);
-
-  //load dummy data
-  const loadDummyData = () => {
-    const dummyCart = [
-      {
-        _id: "1", //this should be an ObjectID
-        name: "Wireless Headphones",
-        price: 59.99,
-        quantity: 1,
-      },
-      {
-        _id: "2",
-        name: "Smart Watch",
-        price: 129.99,
-        quantity: 1,
-      },
-      {
-        _id: "3",
-        name: "Wireless Headphones",
-        price: 59.99,
-        quantity: 1,
-      },
-    ];
-    setCartItems(dummyCart);
-  };
-
   useEffect(() => {
-    loadDummyData();
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
   }, []);
+
+  // //load dummy data
+  // const loadDummyData = () => {
+  //   const dummyCart = [
+  //     {
+  //       _id: "1", //this should be an ObjectID
+  //       name: "Wireless Headphones",
+  //       price: 59.99,
+  //       quantity: 1,
+  //     },
+  //     {
+  //       _id: "2",
+  //       name: "Smart Watch",
+  //       price: 129.99,
+  //       quantity: 1,
+  //     },
+  //     {
+  //       _id: "3",
+  //       name: "Wireless Headphones",
+  //       price: 59.99,
+  //       quantity: 1,
+  //     },
+  //   ];
+  //   setCartItems(dummyCart);
+  // };
+
+  // useEffect(() => {
+  //   loadDummyData();
+  // }, []);
 
   const handleRemove = (id) => {
     const updatedCart = cartItems.filter((item) => item._id !== id);
