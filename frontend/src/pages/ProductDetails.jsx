@@ -10,37 +10,37 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // useEffect(() => {
-  //   const fetchProduct = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError("");
-  //       const res = await API.get(`/products/${id}`);
-  //       setProduct(res.data);
-  //     } catch (err) {
-  //       console.error("Failed to load product", err);
-  //       setError("Failed to load product");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchProduct();
-  // }, [id]);
-
-  //dummy data
-  const dummyProduct = {
-    _id: "1",
-    name: "Sample Product",
-    description: "This is a sample product.",
-    price: 29.99,
-    stock: 10,
-    image: "/vite.svg",
-  };
-
   useEffect(() => {
-    setProduct(dummyProduct);
-    setLoading(false);
-  }, []);
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const res = await API.get(`/products/${id}`);
+        setProduct(res.data);
+      } catch (err) {
+        console.error("Failed to load product", err);
+        setError("Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  // //dummy data
+  // const dummyProduct = {
+  //   _id: "1",
+  //   name: "Sample Product",
+  //   description: "This is a sample product.",
+  //   price: 29.99,
+  //   stock: 10,
+  //   image: "/vite.svg",
+  // };
+
+  // useEffect(() => {
+  //   setProduct(dummyProduct);
+  //   setLoading(false);
+  // }, []);
 
   const handleQuantityChange = (e) => {
     let value = Number(e.target.value);

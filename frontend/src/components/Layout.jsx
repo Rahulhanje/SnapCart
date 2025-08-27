@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "./Navbar";
@@ -6,18 +6,24 @@ import Navbar from "./Navbar";
 function Layout() {
   const { user } = useContext(AuthContext);
 
+  // state for search and category
+  const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("");
+
   return (
     <div className="min-h-screen flex flex-col">
       {user && (
         <Navbar
           role={user.isAdmin ? "admin" : "user"}
           user={user}
-          onSearch={(term) => console.log("Search:", term)}
+          searchTerm={setSearchTerm}
+          category={setCategory}
         />
       )}{" "}
       {/* Show Navbar only if logged in */}
       <main className="flex-1">
-        <Outlet /> {/* Render page content */}
+        <Outlet context={{ searchTerm, category }} />{" "}
+        {/* Render page content */}
       </main>
     </div>
   );

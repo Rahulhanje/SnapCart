@@ -17,7 +17,7 @@ function SignIn() {
     setError("");
     setIsLoading(true);
 
-    const userData = { email, password };
+    const userData = { email: email.trim(), password: password.trim() };
 
     try {
       const res = await API.post(`/auth/login`, userData);
