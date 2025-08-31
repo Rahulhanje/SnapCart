@@ -75,8 +75,8 @@ A full-stack e-commerce application built with React.js frontend and Node.js/Exp
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd e-commerce-platform
+   git clone [<repository-url>](https://github.com/Rahulhanje/SnapCart.git)
+   cd snapcart
    ```
 
 2. **Install Frontend Dependencies**
