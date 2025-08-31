@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import API from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -24,12 +25,14 @@ function Signup() {
       const res = await API.post("/auth/register", userData); //change later
       setLoading(false);
       Navigate("/signin");
+      toast.success("Signup successful! Please sign in.");
     } catch (err) {
       setError(
         err.response?.data?.message ||
           "Failed to signup, Please check your credentials"
       );
       console.error("Error signing up: ", err);
+      toast.error("Failed to signup, Please check your credentials");
     }
     finally{
       setLoading(false)

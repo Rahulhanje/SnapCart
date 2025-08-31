@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -18,39 +19,11 @@ export default function Cart() {
     setCartItems(storedCart);
   }, []);
 
-  // //load dummy data
-  // const loadDummyData = () => {
-  //   const dummyCart = [
-  //     {
-  //       _id: "1", //this should be an ObjectID
-  //       name: "Wireless Headphones",
-  //       price: 59.99,
-  //       quantity: 1,
-  //     },
-  //     {
-  //       _id: "2",
-  //       name: "Smart Watch",
-  //       price: 129.99,
-  //       quantity: 1,
-  //     },
-  //     {
-  //       _id: "3",
-  //       name: "Wireless Headphones",
-  //       price: 59.99,
-  //       quantity: 1,
-  //     },
-  //   ];
-  //   setCartItems(dummyCart);
-  // };
-
-  // useEffect(() => {
-  //   loadDummyData();
-  // }, []);
-
   const handleRemove = (id) => {
     const updatedCart = cartItems.filter((item) => item._id !== id);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    toast.success("Item removed from cart");
   };
 
   const handleCheckout = async () => {
@@ -81,7 +54,7 @@ export default function Cart() {
         totalPrice,
       });
 
-      alert("Order placed successfully!");
+      toast.success("Order placed successfully!");
       setCartItems([]);
       localStorage.removeItem("cart");
       navigate("/orders");
@@ -109,7 +82,7 @@ export default function Cart() {
                 <img
                   src={item.image || "https://via.placeholder.com/200x150"}
                   alt={item.name}
-                  className="w-full h-40 object-cover rounded-lg mb-4"
+                  className="w-full h-50 object-cover rounded-lg mb-4"
                 />
 
                 {/* Product Info */}

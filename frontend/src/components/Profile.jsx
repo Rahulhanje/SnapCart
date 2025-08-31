@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../api";
 
 export default function Profile() {
@@ -8,9 +9,12 @@ export default function Profile() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setError("");
+      setSuccess("");
       try {
         const res = await API.get("/auth/profile");
         setProfile(res.data);
@@ -34,10 +38,11 @@ export default function Profile() {
     setError("");
     setSuccess("");
     try {
-      await API.put("/auth/profile", form);
-      setSuccess("Profile updated successfully");
+      const res = await API.put("/auth/profile", form);
       setProfile(res.data);
+      setSuccess("Profile updated successfully");
       setEditMode(false);
+      navigate("/profile");
     } catch (err) {
       setError("Failed to update profile");
     }

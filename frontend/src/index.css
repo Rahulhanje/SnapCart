@@ -3,6 +3,10 @@
 :root{
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
+
+html{
+  scroll-behavior: smooth;
+}
 /* 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
