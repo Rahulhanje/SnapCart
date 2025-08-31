@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../../api";
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -27,13 +27,12 @@ function SignIn() {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          _id: res.data.id,
+          _id: res.data._id,
           name: res.data.name,
           email: res.data.email,
           isAdmin: res.data.isAdmin,
         })
       ); // Store user data in local storage
-      setIsLoading(false);
       if (res.data.isAdmin) {
         navigate("/admin"); // Redirect to admin dashboard if user is admin
       } else {
@@ -48,7 +47,7 @@ function SignIn() {
           "Failed to sign in. Please check your credentials."
       );
       toast.error("Failed to sign in. Please check your credentials.");
-      console.error("Error signing in:", error);
+      console.error("Error signing in:", err);
     } finally {
       setIsLoading(false);
       setEmail("");
@@ -176,12 +175,12 @@ function SignIn() {
       <div className="flex justify-center items-center mt-4">
         <p className="text-gray-500">
           Don't have an account?{" "}
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="text-blue-600 hover:text-blue-700 font-semibold"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

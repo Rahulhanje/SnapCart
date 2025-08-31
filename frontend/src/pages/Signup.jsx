@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import API from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -19,11 +19,8 @@ function Signup() {
     setLoading(true);
     setError("");
 
-    // const userData = { name, email, password, isAdmin };
-
     try {
-      const res = await API.post("/auth/register", userData); //change later
-      setLoading(false);
+      await API.post("/auth/register", { name, email, password, isAdmin }); 
       Navigate("/signin");
       toast.success("Signup successful! Please sign in.");
     } catch (err) {
@@ -33,9 +30,8 @@ function Signup() {
       );
       console.error("Error signing up: ", err);
       toast.error("Failed to signup, Please check your credentials");
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +105,7 @@ function Signup() {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"

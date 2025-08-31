@@ -1,8 +1,23 @@
 import axios from "axios";
 import { isTokenExpired } from "./src/utils/auth";
 
+// Ensure we have a valid base URL
+const getBaseURL = () => {
+  const envURL = import.meta.env.VITE_BACKEND_URI;
+  console.log("Environment URL:", envURL);
+  
+  if (envURL && envURL.trim() !== '' && envURL.startsWith('http')) {
+    console.log("Using environment URL:", envURL);
+    return envURL;
+  }
+  
+  const defaultURL = "http://localhost:3000/api";
+  console.log("Using default URL:", defaultURL);
+  return defaultURL;
+};
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URI,
+  baseURL: getBaseURL(),
 });
 API.interceptors.request.use(
   (req) => {
