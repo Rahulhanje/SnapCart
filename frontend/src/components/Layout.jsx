@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 function Layout() {
   const { user } = useContext(AuthContext);
@@ -25,6 +26,7 @@ function Layout() {
         <Outlet context={{ searchTerm, category }} />{" "}
         {/* Render page content */}
       </main>
+      <Footer />
     </div>
   );
 }

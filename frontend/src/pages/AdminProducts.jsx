@@ -103,8 +103,8 @@ export default function AdminProducts() {
   };
 
   return (
-    <>
+    <div className="m-10">
       <ProductList />
-    </>
+    </div>
   );
 }

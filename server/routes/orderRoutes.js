@@ -7,6 +7,7 @@ import {
   getOrderById,
   updateOrderStatus,
   getAllRevenue,
+  getOrderStatus,
 } from "../controllers/orderControllers.js";
 
 const orderRoutes = express.Router();
@@ -14,11 +15,12 @@ const orderRoutes = express.Router();
 // user routes
 orderRoutes.post("/", protect, addOrderItems);
 orderRoutes.get("/myorders", protect, getMyOrders);
-orderRoutes.get("/:id", protect, getOrderById);
 
 // admin routes
 orderRoutes.put("/status", protect, admin, updateOrderStatus);
-orderRoutes.get("/", protect, admin, getAllOrders);
 orderRoutes.get("/revenue", protect, admin, getAllRevenue);
+orderRoutes.get("/status", protect, admin, getOrderStatus);
+orderRoutes.get("/", protect, admin, getAllOrders);
 
+orderRoutes.get("/:id", protect, getOrderById);
 export default orderRoutes;

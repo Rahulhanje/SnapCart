@@ -1,13 +1,28 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import {
+  ShoppingCart,
+  Search,
+  User,
+  ChevronDown,
+  Package,
+  ShoppingBag,
+  Users,
+  LogOut,
+  UserCircle,
+  Bell,
+  Menu,
+  X,
+} from "lucide-react";
+import { SearchContext } from "../context/SearchContext";
 
-export default function Navbar({ role, user, onSearch, onCategoryChange }) {
+function Navbar({ role, user }) {
+  const { setSearchTerm } = useContext(SearchContext);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -19,138 +34,336 @@ export default function Navbar({ role, user, onSearch, onCategoryChange }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (searchInput.trim() !== "") {
+      handleSearch();
+    }
+  }, [searchInput]);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/signin");
   };
 
+  const handleSearch = () => {
+    setSearchTerm(searchInput);
+    if (role === "admin") {
+      navigate("/admin/products");
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
-    <nav className="bg-gray-800 text-white px-6 py-3 flex items-center justify-between shadow-md">
-      {/* Left: Logo */}
-      <div
-        className="text-2xl font-bold cursor-pointer text-blue-500"
-        onClick={() => (role === "admin" ? navigate("/admin") : navigate("/"))}
-      >
-        SnapCart
-      </div>
-
-      {/* Center: Search Bar */}
-      <div className="flex-1 flex justify-center mx-6">
-        <div className="flex relative w-full max-w-xl">
-          {/* Category Dropdown */}
-          <select
-            className="focus:outline-none focus:ring-0 p-1 bg-gray-300 text-black text-sm border-none border-r-0 rounded-l-xl"
-            value={category}
-            onChange={(e) => {
-              setCategory(e.target.value);
-              onCategoryChange && onCategoryChange(e.target.value);
-            }}
+    <nav className="bg-white shadow-lg border-b border-gray-100 sticky top-0 z-50 backdrop-blur-lg bg-white/95">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2 cursor-pointer group"
+            onClick={() =>
+              role === "admin" ? navigate("/admin") : navigate("/")
+            }
           >
-            <option value="">All</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="accessories">Accessories</option>
-          </select>
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl">
+              <ShoppingCart className="text-white" size={24} />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              SnapCart
+            </span>
+          </div>
 
-          {/* Search Input */}
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                role === "admin" ? navigate("/admin/products") : navigate("/");
-                onSearch && onSearch(searchTerm);
-              }
-            }}
-            placeholder="Search products..."
-            className="flex-1 p-2 text-black outline-none border border-gray-600 rounded-r-none bg-gray-200"
-          />
+          {/* Search Bar - Desktop */}
+          <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="text-gray-400" size={20} />
+              </div>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                placeholder="Search for products, brands, and more..."
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:bg-gray-100"
+              />
+              <button
+                onClick={handleSearch}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
+              >
+                <Search size={16} />
+              </button>
+            </div>
+          </div>
 
-          {/* Search Button */}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {/* Admin Links */}
+            {role === "admin" && (
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/admin/products"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium"
+                >
+                  <Package size={18} />
+                  Products
+                </Link>
+                <Link
+                  to="/admin/orders"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium"
+                >
+                  <ShoppingBag size={18} />
+                  Orders
+                </Link>
+                <Link
+                  to="/admin/users"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium"
+                >
+                  <Users size={18} />
+                  Users
+                </Link>
+              </div>
+            )}
+
+            {/* User Links */}
+            {role === "user" && (
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/cart"
+                  className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors duration-300"
+                >
+                  <ShoppingCart size={24} />
+                  {/* Cart Badge - you can add cart count here */}
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    0
+                  </span>
+                </Link>
+                <Link
+                  to="/myOrders"
+                  className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium"
+                >
+                  My Orders
+                </Link>
+              </div>
+            )}
+
+            {/* User Dropdown */}
+            {role && (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-all duration-300"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <User className="text-white" size={16} />
+                  </div>
+                  <span className="text-gray-700 font-medium">
+                    {user?.name}
+                  </span>
+                  <ChevronDown
+                    className={`text-gray-500 transform transition-transform duration-300 ${
+                      open ? "rotate-180" : "rotate-0"
+                    }`}
+                    size={16}
+                  />
+                </button>
+
+                {open && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      {role === "admin" && (
+                        <span className="inline-block mt-1 px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                          Administrator
+                        </span>
+                      )}
+                    </div>
+
+                    <Link
+                      to="/profile"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <UserCircle size={18} />
+                      Profile Settings
+                    </Link>
+
+                    {role === "user" && (
+                      <Link
+                        to="/myOrders"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                      >
+                        <ShoppingBag size={18} />
+                        My Orders
+                      </Link>
+                    )}
+
+                    <div className="border-t border-gray-100 mt-2 pt-2">
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200"
+                      >
+                        <LogOut size={18} />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Notifications (placeholder) */}
+            {role && (
+              <button className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors duration-300">
+                <Bell size={20} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  3
+                </span>
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
           <button
-            onClick={() => {
-              role === "admin" ? navigate("/admin/products") : navigate("/");
-              onSearch && onSearch(searchTerm);
-            }}
-            className="px-4 bg-blue-600 hover:bg-blue-700 rounded-r-xl"
+            className="md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <FaSearch className="text-white" />
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
+        </div>
+
+        {/* Mobile Search Bar */}
+        <div className="md:hidden pb-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="text-gray-400" size={18} />
+            </div>
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              placeholder="Search products..."
+              className="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+              onClick={handleSearch}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+            >
+              <Search size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-5">
-        {role === "admin" && (
-          <>
-            <Link to="/admin/products" className="hover:underline">
-              All Products
-            </Link>
-            <Link to="/admin/orders" className="hover:underline">
-              All Orders
-            </Link>
-          </>
-        )}
-
-        {role === "user" && (
-          <>
-            <div
-              className="relative cursor-pointer"
-              onClick={() => navigate("/cart")}
-            >
-              <FaShoppingCart className="text-2xl hover:text-gray-400" />
-            </div>
-            <Link to="/myOrders" className="hover:underline">
-              My Orders
-            </Link>
-          </>
-        )}
-
-        {/* User dropdown */}
-        {role && (
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setOpen(!open)}
-              className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700"
-            >
-              <span>{user?.name}</span>
-              <svg
-                className={`w-4 h-4 transform transition-transform ${
-                  open ? "rotate-180" : "rotate-0"
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            {open && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg">
-                <button
-                  onClick={() => navigate("/profile")}
-                  className="block w-full text-left px-4 py-2 text-black hover:bg-gray-400"
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-6 space-y-4">
+            {/* Admin Mobile Links */}
+            {role === "admin" && (
+              <div className="space-y-3">
+                <Link
+                  to="/admin/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
                 >
-                  Profile
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-400"
+                  <Package size={20} />
+                  All Products
+                </Link>
+                <Link
+                  to="/admin/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
                 >
-                  Logout
+                  <ShoppingBag size={20} />
+                  All Orders
+                </Link>
+                <Link
+                  to="/admin/users"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                >
+                  <Users size={20} />
+                  All Users
+                </Link>
+              </div>
+            )}
+
+            {/* User Mobile Links */}
+            {role === "user" && (
+              <div className="space-y-3">
+                <Link
+                  to="/cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                >
+                  <ShoppingCart size={20} />
+                  Shopping Cart
+                </Link>
+                <Link
+                  to="/myOrders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                >
+                  <ShoppingBag size={20} />
+                  My Orders
+                </Link>
+              </div>
+            )}
+
+            {/* Profile Section */}
+            {role && (
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-center gap-3 px-4 py-3 mb-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <User className="text-white" size={18} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{user?.name}</p>
+                    <p className="text-sm text-gray-500">{user?.email}</p>
+                  </div>
+                </div>
+
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
+                >
+                  <UserCircle size={20} />
+                  Profile Settings
+                </Link>
+
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                >
+                  <LogOut size={20} />
+                  Sign Out
                 </button>
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }
+
+export default Navbar;

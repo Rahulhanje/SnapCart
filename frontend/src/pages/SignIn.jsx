@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api";
 import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function SignIn() {
   const { login } = useContext(AuthContext);
@@ -38,12 +39,15 @@ function SignIn() {
       } else {
         navigate("/"); // Redirect to dashboard after successful sign-in
       }
+      toast.success("Signed in successfully");
       console.log("User signed in successfully:", res.data);
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
           "Failed to sign in. Please check your credentials."
       );
+      toast.error("Failed to sign in. Please check your credentials.");
       console.error("Error signing in:", error);
     } finally {
       setIsLoading(false);

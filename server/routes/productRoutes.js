@@ -15,9 +15,11 @@ const productRoutes = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// common routes
 productRoutes.get("/", getAllProducts);
 productRoutes.get("/:id", getProductById);
 
+//admin routes
 productRoutes.post("/", upload.single("image"), protect, admin, createProduct);
 productRoutes.put(
   "/:id",
